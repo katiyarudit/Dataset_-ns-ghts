@@ -67,25 +67,36 @@ Plotly	Interactive Charts
 🌟 Key Features
 
 ✅ Upload & Explore: Supports .csv, .xlsx, .json formats
+
 ✅ Comprehensive EDA: Statistics, distributions, missing values, outliers
+
 ✅ Advanced Visualizations: Correlation heatmaps, box plots, histograms
+
 ✅ AI-Driven Insights: Feature importance, correlation suggestions
+
 ✅ Interactive Filters: Choose variables, adjust settings, refine analysis
+
 ✅ Dark Mode & Sidebar: Personalized user experience
+
 ✅ Download Processed Data: Save transformed data for further use
+
 ✅ Fast & Lightweight: Runs efficiently on any system
 
 🔧 Prerequisites
 Ensure you have Python 3.9+ installed
+
 pip install -r requirements.txt
+
 ⚙️ Setup
 
 Clone the repository and install dependencies:
 git clone https://github.com/katiyarudit/Dataset_-ns-ghts.git  
 cd Dataset_-ns-ghts  
 pip install -r requirements.txt  
+
 🛠 Development
 To run the project locally, use:
+
 streamlit run app.py
 
 🚀 Build
