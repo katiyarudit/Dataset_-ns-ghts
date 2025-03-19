@@ -24,6 +24,14 @@
 
 Here is the system architecture of the project:
 
+```mermaid
+graph TD;
+    User -->|Uploads Dataset| Streamlit_App;
+    Streamlit_App -->|Processes Data| EDA_Module;
+    EDA_Module -->|Generates Graphs| Visualization_Library;
+    Visualization_Library -->|Displays Insights| User;
+
+
 
 
 
