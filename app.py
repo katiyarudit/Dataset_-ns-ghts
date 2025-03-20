@@ -35,7 +35,7 @@ st.sidebar.info(
     "📧 **Email:** [uditkatiyar2005@gmail.com](mailto:uditkatiyar2005@gmail.com)\n"
     "🔗 **GitHub:** [github.com/katiyarudit](https://github.com/katiyarudit)\n"
     "💼 **LinkedIn:** [linkedin.com/in/udit1105](https://www.linkedin.com/in/udit1105/)(https://linkedin.com/in/udit-katiyar)\n"
-    "📝 **Blog:** [Your Blog Link](https://yourblog.com)"
+    
 )
 
 st.sidebar.markdown("---")
@@ -55,8 +55,8 @@ if theme == "Dark":
     )
 
 # --- MAIN DASHBOARD ---
-st.title("📊 Interactive EDA Dashboard")
-st.markdown("Upload a dataset and explore **statistical insights, correlations, outliers, and visualizations.**")
+st.title("🚀 Smart Data Explorer: AI-Powered EDA & Visualization")
+st.markdown("Upload your dataset and uncover powerful insights with interactive charts, AI-driven analysis, and advanced visualizations!")
 
 # --- DATA LOADING ---
 if uploaded_file:
@@ -76,7 +76,9 @@ if uploaded_file:
         if missing_value_option == "Drop Rows":
             df = df.dropna()
         elif missing_value_option == "Fill with Mean":
-            df = df.fillna(df.mean())
+            numeric_cols = df.select_dtypes(include=['number']).columns
+            df[numeric_cols] = df[numeric_cols].fillna(df[numeric_cols].mean())
+
 
         # Column selection
         numeric_cols = df.select_dtypes(include=["number"]).columns.tolist()
