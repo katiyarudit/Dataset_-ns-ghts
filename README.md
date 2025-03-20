@@ -18,13 +18,24 @@
     🔹 Connect With Me
 
 📸 Demo Images
+## Main Dashboard!
+![System Architecture](assets/dashboard01.png)
+![System Architecture](assets/dashboard02.png)
+![System Architecture](assets/dashboard03.png)
+![System Architecture](assets/dashboard04.png)
+![System Architecture](assets/dashboard05.png)
+![System Architecture](assets/dashboard06.png)
 
 
 🏛 System Architecture
 
 Here is the system architecture of the project:
-## 📐 System Architecture
-![System Architecture](assets/dashboard01.png)
+## System Architecture!
+![System Architecture](assets/architecture01.png)
+## 🔄 System Flowchart  
+
+[📌 View Flowchart on Whimsical](https://whimsical.com/https://whimsical.com/interactive-eda-dashboard-architecture-XfcopuADPsF4z3aJQ8nP6P)  
+
 
 
 
