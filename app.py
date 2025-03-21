@@ -58,96 +58,99 @@ if uploaded_file:
     if df.empty or df.shape[1] == 0:
         st.error("⚠️ Uploaded dataset is empty or contains no valid columns. Please upload a valid dataset.")
     else:
-        st.subheader("📌 Dataset Overview")
-        st.dataframe(df.head())
+        tab1, tab2 = st.tabs(["📊 Graphical Analysis", "📌 Summary Analysis"])
 
-        st.sidebar.subheader("🛠 Data Preprocessing")
+        with tab1:
+            st.subheader("📌 Dataset Overview")
+            st.dataframe(df.head())
 
-        missing_value_option = st.sidebar.radio("Handle Missing Values", ["Do Nothing", "Drop Rows", "Fill with Mean"])
-        if missing_value_option == "Drop Rows":
-            df = df.dropna()
-        elif missing_value_option == "Fill with Mean":
-            numeric_cols = df.select_dtypes(include=['number']).columns
-            df[numeric_cols] = df[numeric_cols].fillna(df[numeric_cols].mean())
+            st.sidebar.subheader("🛠 Data Preprocessing")
 
-        numerical_cols = df.select_dtypes(include=["number"]).columns.tolist()
-        if not numerical_cols:
-            st.error("⚠️ No numerical columns found in dataset.")
-        else:
-            selected_cols = st.sidebar.multiselect("📊 Select Columns for Analysis", numerical_cols, default=numerical_cols)
+            missing_value_option = st.sidebar.radio("Handle Missing Values", ["Do Nothing", "Drop Rows", "Fill with Mean"])
+            if missing_value_option == "Drop Rows":
+                df = df.dropna()
+            elif missing_value_option == "Fill with Mean":
+                numeric_cols = df.select_dtypes(include=['number']).columns
+                df[numeric_cols] = df[numeric_cols].fillna(df[numeric_cols].mean())
 
-            st.subheader("📊 Descriptive Statistics")
-            if selected_cols:
-                st.write(df[selected_cols].describe())
+            numerical_cols = df.select_dtypes(include=["number"]).columns.tolist()
+            if not numerical_cols:
+                st.error("⚠️ No numerical columns found in dataset.")
             else:
-                st.warning("⚠️ Please select at least one column to analyze.")
+                selected_cols = st.sidebar.multiselect("📊 Select Columns for Analysis", numerical_cols, default=numerical_cols)
 
-            st.subheader("🔗 Correlation Heatmap")
-            if len(selected_cols) > 1:
-                fig, ax = plt.subplots(figsize=(10, 5))
-                sns.heatmap(df[selected_cols].corr(), annot=True, cmap="coolwarm", ax=ax)
-                st.pyplot(fig)
+                st.subheader("📊 Descriptive Statistics")
+                if selected_cols:
+                    st.write(df[selected_cols].describe())
+                else:
+                    st.warning("⚠️ Please select at least one column to analyze.")
+
+                st.subheader("🔗 Correlation Heatmap")
+                if len(selected_cols) > 1:
+                    fig, ax = plt.subplots(figsize=(10, 5))
+                    sns.heatmap(df[selected_cols].corr(), annot=True, cmap="coolwarm", ax=ax)
+                    st.pyplot(fig)
+                else:
+                    st.warning("⚠️ Need at least two columns to show correlation.")
+
+                st.subheader("📈 Distribution of Features")
+                for col in selected_cols:
+                    fig = px.histogram(df, x=col, nbins=30, title=f"Distribution of {col}")
+                    st.plotly_chart(fig, use_container_width=True)
+
+                st.subheader("📊 Scatter Plot")
+                if len(selected_cols) > 1:
+                    scatter_x = st.selectbox("Select X-axis", selected_cols)
+                    scatter_y = st.selectbox("Select Y-axis", selected_cols)
+                    fig = px.scatter(df, x=scatter_x, y=scatter_y, title=f"{scatter_x} vs {scatter_y}")
+                    st.plotly_chart(fig, use_container_width=True)
+                else:
+                    st.warning("⚠️ Need at least two columns to create a scatter plot.")
+
+                st.subheader("⚠️ Outlier Detection")
+                for col in selected_cols:
+                    fig = px.box(df, y=col, title=f"Outliers in {col}")
+                    st.plotly_chart(fig, use_container_width=True)
+
+                if "target" in df.columns:
+                    from sklearn.ensemble import RandomForestRegressor
+                    model = RandomForestRegressor()
+                    X = df[selected_cols]
+                    y = df["target"]
+                    model.fit(X, y)
+                    feature_importance = pd.Series(model.feature_importances_, index=selected_cols).sort_values(ascending=False)
+
+                    st.subheader("🔥 Feature Importance")
+                    st.bar_chart(feature_importance)
+
+        with tab2:
+            st.subheader("📌 Automated Dataset Summary")
+            num_rows, num_cols = df.shape
+            st.write(f"✅ The dataset contains **{num_rows} rows** and **{num_cols} columns**.")
+
+            st.subheader("📌 Feature-Wise Summary")
+            for col in df.columns:
+                unique_values = df[col].nunique()
+                missing_values = df[col].isnull().sum()
+                dtype = df[col].dtype
+                st.write(f"🔹 **{col}**: {dtype} | Unique Values: {unique_values} | Missing: {missing_values}")
+
+            st.subheader("🚨 Missing Data Summary")
+            missing_summary = df.isnull().sum()
+            missing_summary = missing_summary[missing_summary > 0]
+            if not missing_summary.empty:
+                st.write(f"⚠️ **{missing_summary.sum()} missing values** detected.")
+                st.write(missing_summary.to_frame(name="Missing Count"))
             else:
-                st.warning("⚠️ Need at least two columns to show correlation.")
+                st.write("✅ No missing values detected.")
 
-            st.subheader("📈 Distribution of Features")
-            for col in selected_cols:
-                fig = px.histogram(df, x=col, nbins=30, title=f"Distribution of {col}")
-                st.plotly_chart(fig, use_container_width=True)
+            st.subheader("📌 Categorical Feature Summary")
+            categorical_cols = df.select_dtypes(include=["object"]).columns
+            for col in categorical_cols:
+                st.write(f"🔹 **{col}** has **{df[col].nunique()} unique categories**.")
+                st.write(df[col].value_counts().head(5))
 
-            st.subheader("📊 Scatter Plot")
-            if len(selected_cols) > 1:
-                scatter_x = st.selectbox("Select X-axis", selected_cols)
-                scatter_y = st.selectbox("Select Y-axis", selected_cols)
-                fig = px.scatter(df, x=scatter_x, y=scatter_y, title=f"{scatter_x} vs {scatter_y}")
-                st.plotly_chart(fig, use_container_width=True)
-            else:
-                st.warning("⚠️ Need at least two columns to create a scatter plot.")
-
-            st.subheader("⚠️ Outlier Detection")
-            for col in selected_cols:
-                fig = px.box(df, y=col, title=f"Outliers in {col}")
-                st.plotly_chart(fig, use_container_width=True)
-
-            if "target" in df.columns:
-                from sklearn.ensemble import RandomForestRegressor
-                model = RandomForestRegressor()
-                X = df[selected_cols]
-                y = df["target"]
-                model.fit(X, y)
-                feature_importance = pd.Series(model.feature_importances_, index=selected_cols).sort_values(ascending=False)
-
-                st.subheader("🔥 Feature Importance")
-                st.bar_chart(feature_importance)
-
-        # ---- TEXTUAL INSIGHTS ----
-        st.subheader("📌 Automated Dataset Summary")
-        num_rows, num_cols = df.shape
-        st.write(f"✅ The dataset contains **{num_rows} rows** and **{num_cols} columns**.")
-
-        st.subheader("📌 Feature-Wise Summary")
-        for col in df.columns:
-            unique_values = df[col].nunique()
-            missing_values = df[col].isnull().sum()
-            dtype = df[col].dtype
-            st.write(f"🔹 **{col}**: {dtype} | Unique Values: {unique_values} | Missing: {missing_values}")
-
-        st.subheader("🚨 Missing Data Summary")
-        missing_summary = df.isnull().sum()
-        missing_summary = missing_summary[missing_summary > 0]
-        if not missing_summary.empty:
-            st.write(f"⚠️ **{missing_summary.sum()} missing values** detected.")
-            st.write(missing_summary.to_frame(name="Missing Count"))
-        else:
-            st.write("✅ No missing values detected.")
-
-        st.subheader("📌 Categorical Feature Summary")
-        categorical_cols = df.select_dtypes(include=["object"]).columns
-        for col in categorical_cols:
-            st.write(f"🔹 **{col}** has **{df[col].nunique()} unique categories**.")
-            st.write(df[col].value_counts().head(5))
-
-        st.success("✅ Full Analysis Completed!")
+            st.success("✅ Full Analysis Completed!")
 
 else:
     st.warning("📌 Please upload a dataset to proceed.")
