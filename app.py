@@ -5,7 +5,23 @@ import plotly.express as px
 import seaborn as sns
 import matplotlib.pyplot as plt
 
+
+
 st.set_page_config(page_title="EDA Dashboard", page_icon="📊", layout="wide")
+st.markdown(
+    """
+    <style>
+    .stApp {
+        background-image: url("https://unsplash.com/photos/purple-and-blue-light-digital-wallpaper-8bghKxNU1j0");
+        background-size: cover;
+        background-repeat: no-repeat;
+        background-attachment: fixed;
+    }
+    </style>
+    """,
+    unsafe_allow_html=True
+)
+
 
 st.sidebar.title("📂 Upload Your Dataset")
 uploaded_file = st.sidebar.file_uploader("Upload CSV or Excel", type=["csv", "xlsx"])
@@ -106,6 +122,21 @@ if uploaded_file:
                     st.plotly_chart(fig, use_container_width=True)
                 else:
                     st.warning("⚠️ Need at least two columns to create a scatter plot.")
+                
+                st.subheader("📊 Pie Chart Visualization")
+
+                # Select categorical columns
+                categorical_cols = df.select_dtypes(include=["object"]).columns.tolist()
+
+                if categorical_cols:
+                        selected_pie_col = st.selectbox("Select a categorical column for Pie Chart", categorical_cols)
+
+                        # Generate Pie Chart
+                        fig = px.pie(df, names=selected_pie_col, title=f"Distribution of {selected_pie_col}")
+                        st.plotly_chart(fig, use_container_width=True)
+                else:
+                        st.warning("⚠️ No categorical columns found for pie chart visualization.")
+
 
                 st.subheader("⚠️ Outlier Detection")
                 for col in selected_cols:
@@ -122,6 +153,10 @@ if uploaded_file:
 
                     st.subheader("🔥 Feature Importance")
                     st.bar_chart(feature_importance)
+                    
+
+                
+
 
         with tab2:
             st.subheader("📌 Automated Dataset Summary")
@@ -151,6 +186,7 @@ if uploaded_file:
                 st.write(df[col].value_counts().head(5))
 
             st.success("✅ Full Analysis Completed!")
+            
 
 else:
     st.warning("📌 Please upload a dataset to proceed.")
