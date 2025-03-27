@@ -46,7 +46,7 @@ st.sidebar.info(
 st.sidebar.title("📢 Contact Me")
 st.sidebar.info(
     "📧 **Email:** [uditkatiyar2005@gmail.com](mailto:uditkatiyar2005@gmail.com)\n"
-    "🔗 **GitHub:** [github.com/katiyarudit](https://github.com/katiyarudit)\n"
+    "🔗 **GitHub:** [github.com/katiyarudit](https://github.com/katiyarudit/dataset_insights)\n"
     "💼 **LinkedIn:** [linkedin.com/in/udit1105](https://www.linkedin.com/in/udit1105/)\n"
 )
 
