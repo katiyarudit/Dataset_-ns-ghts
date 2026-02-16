@@ -1,5 +1,5 @@
 🚀 Smart Data Explorer: AI-Powered EDA & Visualization
-https://dataset-ns-ghts-udit.streamlit.app/
+https://data-set-udit.streamlit.app/
 
 📊 "Upload your dataset and uncover powerful insights with interactive charts, AI-driven analysis, and advanced visualizations!"
 
